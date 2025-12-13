@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cookio — Premium Kitchen Marketplace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0f1724; --surface:#0b1220; --card:#0f1728; --muted:#9aa4b2; --accent:#ff7a00; --primary:#6a8cff; --glass: rgba(255,255,255,0.04);
+      --radius:14px; --shadow: 0 10px 30px rgba(2,6,23,0.6);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,-apple-system,'Helvetica Neue',Arial;color:#e6eef8;background:linear-gradient(180deg,#071026 0%, #081228 60%)}
+
+    /* STICKY NAV */
+    header{position:sticky;top:0;z-index:1000;backdrop-filter:blur(6px);background:linear-gradient(180deg,rgba(6,10,20,0.6),rgba(6,10,20,0.35));display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid rgba(255,255,255,0.03)}
+    .brand{display:flex;align-items:center;gap:14px}
+    .logo{background:linear-gradient(90deg,var(--primary),#89a3ff);padding:10px;border-radius:10px;color:#04102a;font-weight:800}
+    nav{display:flex;gap:14px;align-items:center}
+    nav a{color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:10px;font-weight:600}
+    nav a.active,nav a:hover{color:#fff;background:var(--glass)}
+
+    .searchbar{display:flex;align-items:center;gap:10px}
+    .searchbar input{width:340px;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff}
+    .icon-btn{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:10px;color:var(--muted);cursor:pointer}
+
+    /* HERO */
+    .hero{display:grid;grid-template-columns:1fr 460px;gap:28px;padding:48px 6%;align-items:center}
+    .hero-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:28px;border-radius:18px;box-shadow:var(--shadow)}
+    .hero h1{font-size:44px;margin:0 0 10px}
+    .hero p{color:var(--muted);margin:0 0 18px}
+    .cta{display:flex;gap:12px}
+    .btn{background:linear-gradient(90deg,var(--primary),#89a3ff);padding:12px 18px;border-radius:12px;color:#04102a;font-weight:700;border:none;cursor:pointer}
+    .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px 14px;border-radius:12px;color:var(--muted);cursor:pointer}
+
+    /* SLIDER */
+    .slider{position:relative;overflow:hidden;border-radius:12px}
+    .slides{display:flex;transition:transform .5s ease}
+    .slide{min-width:100%;padding:18px;display:flex;gap:14px;align-items:center}
+    .slide img{width:220px;height:160px;object-fit:cover;border-radius:12px}
+
+    /* LAYOUT */
+    .container{max-width:1200px;margin:28px auto;padding:0 20px}
+    .grid{display:grid;grid-template-columns:260px 1fr;gap:20px}
+
+    /* SIDE */
+    .panel{background:linear-gradient(180deg,#07102655,#07102633);padding:16px;border-radius:14px}
+    .filter h4{color:var(--muted);margin:8px 0}
+    .chip{display:inline-block;padding:8px 12px;margin:6px;border-radius:999px;border:1px solid rgba(255,255,255,0.04);cursor:pointer;color:var(--muted)}
+
+    /* PRODUCTS */
+    .products{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:12px;box-shadow:0 6px 24px rgba(2,6,23,0.5);transition:transform .2s ease, box-shadow .2s;cursor:grab}
+    .card:hover{transform:translateY(-8px);box-shadow:0 18px 40px rgba(2,6,23,0.6)}
+    .card img{width:100%;height:160px;object-fit:cover;border-radius:10px}
+    .title{font-weight:700;margin-top:10px}
+    .meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+    .price{color:var(--accent);font-weight:800}
+    .p-actions{display:flex;gap:8px;margin-top:10px}
+    .small{padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff;font-weight:700;cursor:pointer}
+
+    /* FLOATING CART */
+    .floating-cart{position:fixed;right:18px;bottom:18px;width:360px;border-radius:12px;padding:12px;background:linear-gradient(180deg,#071026,#061322);box-shadow:0 20px 60px rgba(3,8,20,0.6);display:flex;flex-direction:column;gap:10px}
+    .cart-head{display:flex;justify-content:space-between;align-items:center}
+    .cart-items{max-height:260px;overflow:auto}
+    .cart-item{display:flex;gap:10px;align-items:center;padding:8px;border-bottom:1px solid rgba(255,255,255,0.02)}
+    .cart-item img{width:56px;height:56px;object-fit:cover;border-radius:8px}
+
+    /* COMPARE BAR */
+    .compare-bar{position:fixed;left:18px;bottom:18px;padding:10px;border-radius:12px;background:linear-gradient(180deg,#041124,#081228);box-shadow:0 16px 40px rgba(2,6,23,0.6)}
+
+    /* MODALS */
+    .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:2000}
+    .modal .box{background:linear-gradient(180deg,#071026,#081228);padding:20px;border-radius:12px;width:90%;max-width:880px}
+
+    /* BLOG & TESTIMONIALS */
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .testimonial{padding:16px;border-radius:12px;background:linear-gradient(180deg,#07102644,#07102622)}
+
+    /* RESPONSIVE */
+    @media (max-width:980px){.hero{grid-template-columns:1fr;}.searchbar input{width:180px}.grid{grid-template-columns:1fr}.floating-cart{right:8px;left:8px;width:auto}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand"><div class="logo">Cookio</div><div style="color:var(--muted);font-weight:600">Kitchen Marketplace</div></div>
+    <nav>
+      <a href="#home" data-route>Home</a>
+      <a href="#categories" data-route>Categories</a>
+      <a href="#guides" data-route>Guides</a>
+      <a href="#reviews" data-route>Reviews</a>
+      <a href="#deals" data-route>Deals</a>
+      <a href="#about" data-route>About</a>
+      <a href="#contact" data-route>Contact</a>
+    </nav>
+    <div class="searchbar">
+      <input id="search" placeholder="Search products, brands, e.g., air fryer" />
+      <button id="darkToggle" class="icon-btn">🌙</button>
+      <button id="openCartBtn" class="icon-btn">🛒 <span id="miniCount">0</span></button>
+    </div>
+  </header>
+
+  <!-- HERO + SLIDER -->
+  <section class="hero container" id="home">
+    <div class="hero-card">
+      <h1>Cookio — Premium kitchen picks that sell</h1>
+      <p>Curated appliances, detailed guides, product comparisons and high-converting affiliate funnels — designed to turn visitors into buyers.</p>
+      <div class="cta">
+        <button class="btn" onclick="navigate('#categories')">Shop by Category</button>
+        <button class="ghost" onclick="navigate('#guides')">Read Buying Guides</button>
+      </div>
+      <div style="margin-top:18px">
+        <h4 style="color:var(--muted);margin-bottom:8px">Top Deals</h4>
+        <div class="slider" id="promoSlider">
+          <div class="slides" id="slides"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="hero-card" style="flex:1;display:flex;flex-direction:column;justify-content:center">
+        <h3 style="margin:0">Free Shipping on orders over ₹1999</h3>
+        <p style="color:var(--muted)">Limited time — curated bundles and starter kits available.</p>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn" onclick="openBundleModal()">View Bundles</button>
+          <button class="ghost" onclick="navigate('#deals')">See All Deals</button>
+        </div>
+      </div>
+      <div class="hero-card" style="padding:12px;text-align:center">
+        <div style="font-weight:700">Why Cookio?</div>
+        <div style="color:var(--muted);margin-top:8px">High converting templates • SEO-ready structure • Designed for affiliate growth</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN -->
+  <main class="container">
+    <div class="grid" id="mainGrid">
+      <!-- SIDEBAR -->
+      <aside class="panel" id="sidebar">
+        <h3 style="margin-top:0">Filters</h3>
+        <div class="filter">
+          <h4>Categories</h4>
+          <div id="catChips"></div>
+        </div>
+        <div class="filter">
+          <h4>Price</h4>
+          <div><label><input type="radio" name="price" value="any" checked> Any</label></div>
+          <div><label><input type="radio" name="price" value="0-999"> Under ₹999</label></div>
+          <div><label><input type="radio" name="price" value="1000-2999"> ₹1000–₹2999</label></div>
+          <div><label><input type="radio" name="price" value="3000+"> Above ₹3000</label></div>
+        </div>
+        <div class="filter">
+          <h4>Ratings</h4>
+          <label><input type="checkbox" id="rat4"> 4★ & up</label><br>
+          <label><input type="checkbox" id="rat3"> 3★ & up</label>
+        </div>
+        <div class="filter">
+          <h4>Sort</h4>
+          <select id="sortBy"><option value="popular">Most Popular</option><option value="priceAsc">Price: Low to High</option><option value="priceDesc">Price: High to Low</option></select>
+        </div>
+        <div style="margin-top:12px"><button class="btn" onclick="clearFilters()">Clear Filters</button></div>
+      </aside>
+
+      <!-- PRODUCTS / CONTENT -->
+      <section>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h2 id="productsHeader">Featured Products</h2>
+          <div style="color:var(--muted)">Showing <span id="visibleCount">0</span></div>
+        </div>
+
+        <div id="products" class="products" aria-live="polite" style="margin-top:12px"></div>
+        <div id="loader" style="text-align:center;padding:20px;color:var(--muted);display:none">Loading more products…</div>
+
+        <section style="margin-top:28px">
+          <h3>Testimonials</h3>
+          <div class="two-col" id="testimonials"></div>
+        </section>
+
+        <section style="margin-top:24px">
+          <h3 id="guidesHeader">Guides & Articles</h3>
+          <div class="blog-grid" id="blogGrid"></div>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <!-- FLOATING CART & COMPARE -->
+  <div id="floatingArea">
+    <div id="compareBar" class="compare-bar" style="display:none"></div>
+    <div id="cartBox" class="floating-cart" style="display:none"></div>
+  </div>
+
+  <!-- MODALS -->
+  <div id="modalRoot"></div>
+
+  <footer style="padding:26px 6%;margin-top:28px;color:var(--muted)">
+    <div style="max-width:1100px;margin:0 auto">© Cookio — Built for conversion. <span style="float:right">As an Amazon Associate I earn from qualifying purchases.</span></div>
+  </footer>
+
+  <script>
+    /*********************
+     * DATA (SAMPLE) Replace AFF_LINK_x with your real Amazon Associate links
+     *********************/
+    const PRODUCTS_MASTER = [
+      {id:101,title:'Philips Air Fryer 2.2L',price:5499,cat:'Air Fryers',brand:'Philips',rating:4.6,img:'https://m.media-amazon.com/images/I/71K9ybq7ZQL._SL1500_.jpg',link:'AFF_LINK_101'},
+      {id:102,title:'Pigeon Mini Electric Chopper',price:449,cat:'Choppers',brand:'Pigeon',rating:4.3,img:'https://m.media-amazon.com/images/I/61B9rLxV4PL._SL1500_.jpg',link:'AFF_LINK_102'},
+      {id:103,title:'Butterfly Mixer Grinder 750W',price:2799,cat:'Mixers / Grinders',brand:'Butterfly',rating:4.4,img:'https://m.media-amazon.com/images/I/71WFf0aISxL._SL1500_.jpg',link:'AFF_LINK_103'},
+      {id:104,title:'Prestige Electric Kettle 1.7L',price:999,cat:'Electric Cookers',brand:'Prestige',rating:4.5,img:'https://m.media-amazon.com/images/I/71z2HHTgSNL._SL1500_.jpg',link:'AFF_LINK_104'},
+      {id:105,title:'Kent Sandwich Toaster',price:1299,cat:'Toasters',brand:'Kent',rating:4.2,img:'https://m.media-amazon.com/images/I/81Ipp3VQXxL._SL1500_.jpg',link:'AFF_LINK_105'},
+      {id:106,title:'Bajaj Electric Kettle',price:799,cat:'Electric Cookers',brand:'Bajaj',rating:4.2,img:'https://m.media-amazon.com/images/I/61w0V7-5nCL._SL1500_.jpg',link:'AFF_LINK_106'},
+      {id:107,title:'Morphy Richards Mixer',price:3299,cat:'Mixers / Grinders',brand:'Morphy Richards',rating:4.3,img:'https://m.media-amazon.com/images/I/71ZT0i3wOtL._SL1500_.jpg',link:'AFF_LINK_107'},
+      {id:108,title:'Wonderchef Chopper',price:799,cat:'Choppers',brand:'Wonderchef',rating:4.0,img:'https://m.media-amazon.com/images/I/61J8y1s5GdL._SL1500_.jpg',link:'AFF_LINK_108'},
+      {id:109,title:'Havells Hand Blender',price:1499,cat:'Blenders',brand:'Havells',rating:4.1,img:'https://m.media-amazon.com/images/I/61kGQH6oJ0L._SL1500_.jpg',link:'AFF_LINK_109'},
+      {id:110,title:'Usha Toaster',price:1499,cat:'Toasters',brand:'Usha',rating:4.0,img:'https://m.media-amazon.com/images/I/71g5b7g7i9L._SL1500_.jpg',link:'AFF_LINK_110'}
+    ];
+
+    /********************* STATE *********************/
+    let PRODUCTS = [...PRODUCTS_MASTER]; // working set for infinite loading
+    let cart = JSON.parse(localStorage.getItem('cookio_cart')||'[]');
+    let compare = JSON.parse(localStorage.getItem('cookio_compare')||'[]');
+    let page = 0; const PAGE_SIZE = 6; // load more
+
+    /********************* UTILITIES *********************/
+    function $(sel){ return document.querySelector(sel); }
+    function $all(sel){ return Array.from(document.querySelectorAll(sel)); }
+
+    /********************* ROUTING (single-file multi-page) *********************/
+    function navigate(hash){ window.location.hash = hash; renderRoute(); }
+    function renderRoute(){ const hash = location.hash || '#home'; $all('nav a').forEach(a=>a.classList.toggle('active', a.getAttribute('href')===hash));
+      // scroll to section or adjust content
+      if(hash === '#categories') { document.getElementById('productsHeader').innerText = 'Shop by Category'; document.getElementById('products').scrollIntoView({behavior:'smooth'}); }
+      if(hash === '#guides') { document.getElementById('guidesHeader').scrollIntoView({behavior:'smooth'}); }
+    }
+    window.addEventListener('hashchange', renderRoute);
+
+    /********************* SLIDER *********************/
+    const PROMOS = [
+      {title:'Air Fryer Sale — Up to 25% off',img:PRODUCTS_MASTER[0].img},
+      {title:'Mixer Deals — Top picks under ₹3,000',img:PRODUCTS_MASTER[2].img},
+      {title:'Kettles & Toasters: Starter kit',img:PRODUCTS_MASTER[3].img}
+    ];
+    function initSlider(){ const slides = $('#slides'); PROMOS.forEach(p=>{ const s=document.createElement('div'); s.className='slide'; s.innerHTML=`<img src="${p.img}" alt=""> <div><h3 style="margin:0">${p.title}</h3><p style="color:var(--muted)">Limited time deals</p></div>`; slides.appendChild(s); }); let idx=0; setInterval(()=>{ idx=(idx+1)%PROMOS.length; slides.style.transform = `translateX(-${idx*100}%)`; },3500); }
+
+    /********************* RENDER CATEGORIES *********************/
+    function renderCategories(){ const cats = [...new Set(PRODUCTS_MASTER.map(p=>p.cat))]; const el = $('#catChips'); el.innerHTML=''; cats.forEach(c=>{ const b=document.createElement('button'); b.className='chip'; b.innerText=c; b.onclick=()=>{ applyCategory(c); }; el.appendChild(b); }); }
+    function applyCategory(cat){ document.getElementById('productsHeader').innerText = cat; filterState.category = cat; resetAndRender(); }
+
+    /********************* FILTERS & SEARCH *********************/
+    const searchInput = $('#search'); let filterState = {q:'',category:null,price:'any',rat4:false,rat3:false,sort:'popular'};
+    let debounceTimer;
+    searchInput.addEventListener('input',e=>{ clearTimeout(debounceTimer); debounceTimer = setTimeout(()=>{ filterState.q = e.target.value.trim().toLowerCase(); resetAndRender(); },300); });
+    $('#sortBy').addEventListener('change',e=>{ filterState.sort = e.target.value; resetAndRender(); });
+    $all('input[name=price]').forEach(r=>r.addEventListener('change',()=>{ filterState.price = document.querySelector('input[name=price]:checked').value; resetAndRender(); }));
+    $('#rat4').addEventListener('change',e=>{ filterState.rat4 = e.target.checked; resetAndRender(); });
+    $('#rat3').addEventListener('change',e=>{ filterState.rat3 = e.target.checked; resetAndRender(); });
+
+    function clearFilters(){ filterState = {q:'',category:null,price:'any',rat4:false,rat3:false,sort:'popular'}; searchInput.value=''; document.querySelector('input[name=price][value=any]').checked=true; document.getElementById('rat4').checked=false; document.getElementById('rat3').checked=false; document.getElementById('sortBy').value='popular'; document.getElementById('productsHeader').innerText='Featured Products'; resetAndRender(); }
+
+    function getFiltered(){ let out = PRODUCTS_MASTER.filter(p=>{ const q = filterState.q; if(q && !(p.title.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q))) return false; if(filterState.category && p.cat!==filterState.category) return false; if(filterState.price && filterState.price!=='any'){ if(filterState.price==='0-999' && p.price>999) return false; if(filterState.price==='1000-2999' && (p.price<1000||p.price>2999)) return false; if(filterState.price==='3000+' && p.price<3000) return false; } if(filterState.rat4 && p.rating<4) return false; if(filterState.rat3 && p.rating<3) return false; return true; });
+      if(filterState.sort==='priceAsc') out.sort((a,b)=>a.price-b.price);
+      if(filterState.sort==='priceDesc') out.sort((a,b)=>b.price-a.price);
+      return out;
+    }
+
+    /********************* INFINITE LOAD / AUT0-LOADING *********************/
+    function resetAndRender(){ page=0; $('#products').innerHTML=''; loadMore(); }
+    function loadMore(){ const all = getFiltered(); const start = page*PAGE_SIZE; const slice = all.slice(start,start+PAGE_SIZE); slice.forEach(renderProduct); page++; document.getElementById('visibleCount').innerText = Math.min(all.length, page*PAGE_SIZE); if((page*PAGE_SIZE) >= all.length){ $('#loader').style.display='none'; } else { $('#loader').style.display='block'; }
+    }
+    window.addEventListener('scroll',()=>{ if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 1200){ // near bottom
+        // load next page
+        const all = getFiltered(); if(page*PAGE_SIZE < all.length){ loadMore(); }
+      } });
+
+    /********************* RENDER PRODUCT CARD *********************/
+    function renderProduct(p){ const c = document.createElement('div'); c.className='card'; c.innerHTML = `<img src="${p.img}" alt="${p.title}"><div class="title">${p.title}</div><div style="color:var(--muted);font-size:13px">${p.brand} • ${p.cat}</div><div class="meta"><div>⭐ ${p.rating}</div><div class="price">₹${p.price}</div></div><div class="p-actions"><button class="small" onclick='quickView(${p.id})'>Quick View</button><button class="small" onclick='addToCart(${p.id})' style="background:var(--accent);border:none">Add</button><button class="small" onclick='toggleCompare(${p.id})'>Compare</button></div>`; $('#products').appendChild(c); }
+
+    /********************* QUICK VIEW *********************/
+    function quickView(id){ const p = PRODUCTS_MASTER.find(x=>x.id===id); showModal(`<div style="display:flex;gap:14px"><img src="${p.img}" style="width:260px;height:180px;object-fit:cover;border-radius:10px"><div style="flex:1"><h2 style="margin-top:0">${p.title}</h2><p style="color:var(--muted)">Brand: ${p.brand} • Category: ${p.cat}</p><p style="font-weight:700;color:var(--accent);font-size:18px">₹${p.price}</p><div style="margin-top:12px"><button class='btn' onclick='addToCart(${p.id})'>Add to Cart</button> <a class='ghost' href='${p.link}' target='_blank'>Buy on Amazon</a></div></div></div>`); }
+
+    /********************* CART LOGIC *********************/
+    function saveCart(){ localStorage.setItem('cookio_cart', JSON.stringify(cart)); renderCart(); }
+    function addToCart(id){ const p = PRODUCTS_MASTER.find(x=>x.id===id); const it = cart.find(i=>i.id===id); if(it) it.qty++; else cart.push({id:p.id,title:p.title,price:p.price,img:p.img,link:p.link,qty:1}); saveCart(); openCart(); }
+    function removeFromCart(id){ cart = cart.filter(i=>i.id!==id); saveCart(); }
+    function changeQty(id,delta){ const it = cart.find(i=>i.id===id); if(!it) return; it.qty += delta; if(it.qty<1) removeFromCart(id); saveCart(); }
+
+    function renderCart(){ const box = $('#cartBox'); if(cart.length===0){ box.style.display='none'; $('#miniCount').innerText=0; return; } box.style.display='flex'; $('#miniCount').innerText = cart.reduce((s,i)=>s+i.qty,0); box.innerHTML = `<div class="cart-head"><div style="font-weight:800">Your Cart</div><div><button class='ghost' onclick='closeCart()'>Close</button></div></div><div class='cart-items'>${cart.map(i=>`<div class='cart-item'><img src='${i.img}'><div style='flex:1'><div style='font-weight:700'>${i.title}</div><div style='color:var(--muted);font-size:13px'>₹${i.price} × ${i.qty}</div></div><div style='text-align:right'><button class='ghost' onclick='changeQty(${i.id},1)'>+</button><button class='ghost' onclick='changeQty(${i.id},-1)'>−</button><br><button class='ghost' style='margin-top:6px' onclick='removeFromCart(${i.id})'>Remove</button></div></div>`).join('')}</div><div style='display:flex;justify-content:space-between;align-items:center'><div style='font-weight:800'>Total: ₹${cart.reduce((s,i)=>s+i.price*i.qty,0)}</div><div><button class='btn' onclick='checkout()'>Checkout</button></div></div>`; }
+    function openCart(){ $('#cartBox').style.display='flex'; }
+    function closeCart(){ $('#cartBox').style.display='none'; }
+    function checkout(){ if(cart.length===0){ alert('Cart is empty'); return; } // For affiliate flow, open product links in new tabs
+      cart.forEach(i=>window.open(i.link,'_blank')); alert('Opening product pages on Amazon (affiliate links).'); }
+
+    /********************* COMPARE *********************/
+    function toggleCompare(id){ if(compare.includes(id)){ compare = compare.filter(x=>x!==id); } else { if(compare.length>=3){ alert('You can compare up to 3 products'); return; } compare.push(id); } localStorage.setItem('cookio_compare',JSON.stringify(compare)); renderCompare(); }
+    function renderCompare(){ const bar = $('#compareBar'); if(compare.length===0){ bar.style.display='none'; return; } bar.style.display='block'; bar.innerHTML = `<div style='font-weight:800'>Compare (${compare.length})</div><div style='display:flex;gap:8px;margin-top:8px'>${compare.map(id=>{ const p=PRODUCTS_MASTER.find(x=>x.id===id); return `<div style="padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.02)">${p.title}</div>`; }).join('')}</div><div style='margin-top:10px'><button class='btn' onclick='openCompare()'>Open Comparison</button> <button class='ghost' onclick='clearCompare()'>Clear</button></div>`; }
+    function openCompare(){ if(compare.length<2){ alert('Select at least 2 products'); return; } const comps = compare.map(id=>PRODUCTS_MASTER.find(x=>x.id===id)); let html = '<table style="width:100%;border-collapse:collapse;color:#fff"><tr><th style="text-align:left">Product</th>' + comps.map(c=>`<th style="text-align:left;padding:8px">${c.title}</th>`).join('') + '</tr>' + '<tr><td style="padding:8px">Price</td>' + comps.map(c=>`<td style="padding:8px">₹${c.price}</td>`).join('') + '</tr>' + '<tr><td style="padding:8px">Rating</td>' + comps.map(c=>`<td style="padding:8px">${c.rating}★</td>`).join('') + '</tr>' + '<tr><td style="padding:8px">Action</td>' + comps.map(c=>`<td style="padding:8px"><a class='btn' href='${c.link}' target='_blank'>Buy on Amazon</a></td>`).join('') + '</tr></table>'; showModal(html); }
+    function clearCompare(){ compare=[]; localStorage.setItem('cookio_compare','[]'); renderCompare(); }
+
+    /********************* MODAL MANAGER *********************/
+    function showModal(html){ const root = $('#modalRoot'); root.innerHTML = `<div class='modal' onclick='closeModal(event)'><div class='box' onclick='event.stopPropagation()'>${html}</div></div>`; }
+    function closeModal(e){ if(e) e.stopPropagation(); $('#modalRoot').innerHTML=''; }
+
+    /********************* BUNDLES *********************/
+    function openBundleModal(){ const bundle = [PRODUCTS_MASTER[1],PRODUCTS_MASTER[3],PRODUCTS_MASTER[4]]; let html = '<h2>Starter Bundle</h2><div style="display:flex;gap:10px;flex-wrap:wrap">' + bundle.map(b=>`<div style="min-width:160px;padding:10px;background:rgba(255,255,255,0.02);border-radius:10px;text-align:center"><img src='${b.img}' style='width:120px;height:80px;object-fit:cover;border-radius:8px'><div style='font-weight:700;margin-top:8px'>${b.title}</div><div style='color:var(--muted)'>₹${b.price}</div><div style='margin-top:8px'><button class='btn' onclick='addToCart(${b.id})'>Add</button></div></div>`).join('') + '</div>'; showModal(html); }
+
+    /********************* TESTIMONIALS & BLOG *********************/
+    function renderTestimonials(){ const t = $('#testimonials'); const list = [{name:'Riya',text:'Air fryer I bought from Cookio changed my mornings.'},{name:'Amit',text:'Great curation — saved me time.'}]; list.forEach(item=>{ const d=document.createElement('div'); d.className='testimonial'; d.innerHTML = `<div style='font-weight:800'>${item.name}</div><div style='color:var(--muted);margin-top:8px'>${item.text}</div>`; t.appendChild(d); }); }
+    function renderBlog(){ const b = $('#blogGrid'); const posts = [{t:'How to choose an air fryer',s:'Size, wattage and what matters'}, {t:'Top 7 budget kitchen gadgets',s:'High value, low cost picks'}]; posts.forEach(p=>{ const el = document.createElement('div'); el.className='panel'; el.innerHTML = `<div style='font-weight:800'>${p.t}</div><div style='color:var(--muted);margin-top:8px'>${p.s}</div><div style='margin-top:8px'><a href='#' class='ghost'>Read</a></div>`; b.appendChild(el); }); }
+
+    /********************* DARK MODE / THEME SWITCH *********************/
+    document.getElementById('darkToggle').addEventListener('click',()=>{ const root = document.documentElement; if(root.style.getPropertyValue('--accent')==='--accent'){ root.style.removeProperty('--accent'); } // simple placeholder to show toggle effect
+      if(root.style.backgroundColor==='white'){ root.style.backgroundColor=''; } else { document.body.style.filter = document.body.style.filter ? '' : 'brightness(0.98)'; } });
+
+    /********************* INIT *********************/
+    function init(){ initSlider(); renderCategories(); renderTestimonials(); renderBlog(); renderCompare(); renderCart(); resetAndRender(); renderRoute(); // attach nav click
+      $all('a[data-route]').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); navigate(a.getAttribute('href')); }));
+    }
+
+    // console helper for replacing affiliate links
+    console.log('Replace AFF_LINK_x in PRODUCTS_MASTER with your Amazon Associates links');
+    init();
+  </script>
+</body>
+</html>
